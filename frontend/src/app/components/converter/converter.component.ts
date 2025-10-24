@@ -29,11 +29,17 @@ export class ConverterComponent implements OnInit {
     console.log(this.records);
   }
 
+  formatDate(date: Date | null): string {
+    if (!date) return '';
+    return date.toLocaleDateString('en-CA'); // YYYY-MM-DD
+  }
+
   convert() {
     this.loading = true;
+    console.log(this.date);
     const obs =
       this.conversionType === 'historical'
-        ? this.currencyService.convertHistorical(this.fromCurrency, this.toCurrency, this.amount, this.date?.toISOString().split('T')[0] || '')
+        ? this.currencyService.convertHistorical(this.fromCurrency, this.toCurrency, this.amount, this.formatDate(this.date) || '')
         : this.currencyService.convertLatest(this.fromCurrency, this.toCurrency, this.amount);
 
     obs.subscribe({
