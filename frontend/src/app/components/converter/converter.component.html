@@ -1,0 +1,95 @@
+<div class="converter-container">
+  <mat-card>
+    <h2 class="title">Currency Converter</h2>
+
+    <form (ngSubmit)="convert()" class="converter-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Conversion Type</mat-label>
+        <mat-select [(ngModel)]="conversionType" name="type">
+          <mat-option value="latest">Latest</mat-option>
+          <mat-option value="historical">Historical</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="conversionType === 'historical'">
+        <mat-label>Select Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="date" name="date" required>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <div class="currency-row">
+        <mat-form-field appearance="outline">
+          <mat-label>From</mat-label>
+          <mat-select [(ngModel)]="fromCurrency" name="from" required>
+            <mat-option *ngFor="let cur of currencies" [value]="cur">{{ cur }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="amount-input">
+          <mat-label>Amount</mat-label>
+          <input matInput type="number" [(ngModel)]="amount" name="amount" required appAutofocus />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>To</mat-label>
+          <mat-select [(ngModel)]="toCurrency" name="to" required>
+            <mat-option *ngFor="let cur of currencies" [value]="cur">{{ cur }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+        Convert
+      </button>
+    </form>
+
+    <app-loader [loading]="loading"></app-loader>
+
+    <div *ngIf="result" class="result">
+      <p>{{ amount }} {{ fromCurrency }} = <strong>{{ result }}</strong> {{ toCurrency }}</p>
+    </div>
+  </mat-card>
+  
+  <mat-card>
+    <div class="mt-6">
+        <h2 class="title mb-2">Conversion History</h2>
+
+        <div class="flex justify-center items-center" *ngIf="tableLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <div class="table-container" *ngIf="!tableLoading && records.length > 0">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                    <th>CreatedAt</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>Rate</th>
+                    <th>Result</th>
+                    <th>ConversionDate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of records">
+                    <td>{{ record.createdAt | date:'medium' }}</td>
+                    <td>{{ record.fromCurrency }}</td>
+                    <td>{{ record.toCurrency }}</td>
+                    <td>{{ record.amount }}</td>
+                    <td>{{ record.rate }}</td>
+                    <td>{{ record.result }}</td>
+                    <td>{{ record.conversionDate | date }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center text-gray-500" *ngIf="!tableLoading && records.length === 0">
+            No conversion records found.
+        </div>
+    </div>
+
+  </mat-card>
+</div>
