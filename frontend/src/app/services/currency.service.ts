@@ -28,7 +28,7 @@ export class CurrencyService {
       fromCurrency: from,
       toCurrency: to,
       amount,
-      date,
+      conversionDate: date,
     });
   }
 
